@@ -25,7 +25,6 @@ namespace TestHelpers;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
-use PHPUnit\Framework\Assert;
 use TusPhp\Exception\ConnectionException;
 use TusPhp\Exception\FileException;
 use Psr\Http\Message\ResponseInterface;
@@ -40,13 +39,15 @@ use TusPhp\Tus\Client;
 class TusClient extends Client {
 
 	/**
+	 * creates a resource with a post request and returns response.
+	 *
 	 * @param string $key
 	 * @param int $bytes
 	 *
 	 * @return ResponseInterface
 	 * @throws GuzzleException
 	 */
-	public function createUploadWithResponse(string $key, int $bytes = -1): ResponseInterface {
+	public function createWithUploadRR(string $key, int $bytes = -1): ResponseInterface {
 		$bytes = $bytes < 0 ? $this->fileSize : $bytes;
 		$headers = $this->headers + [
 				'Upload-Length' => $this->fileSize,
@@ -77,29 +78,31 @@ class TusClient extends Client {
 		} catch (ClientException $e) {
 			$response = $e->getResponse();
 		}
-		$statusCode = $response->getStatusCode();
-		if ($statusCode !== HttpResponse::HTTP_CREATED) {
-			return $response;
+		if ($response->getStatusCode() === HttpResponse::HTTP_CREATED) {
+			$uploadLocation = current($response->getHeader('location'));
+			$this->getCache()->set(
+				$this->getKey(),
+				[
+					'location' => $uploadLocation,
+					'expires_at' => Carbon::now()->addSeconds(
+						$this->getCache()->getTtl()
+					)->format($this->getCache()::RFC_7231),
+				]
+			);
 		}
-		$uploadLocation = current($response->getHeader('location'));
-		$this->getCache()->set(
-			$this->getKey(),
-			[
-			'location' => $uploadLocation,
-			'expires_at' => Carbon::now()->addSeconds($this->getCache()->getTtl())->format($this->getCache()::RFC_7231),
-			]
-		);
 		return $response;
 	}
 
 	/**
+	 * upload file and returns response.
+	 *
 	 * @param int $bytes
 	 *
 	 * @return ResponseInterface
 	 * @throws GuzzleException
 	 * @throws TusException | ConnectionException
 	 */
-	public function uploadWithResponse(int $bytes = -1): ResponseInterface {
+	public function uploadRR(int $bytes = -1): ResponseInterface {
 		$bytes  = $bytes < 0 ? $this->getFileSize() : $bytes;
 		$offset = $this->partialOffset < 0 ? 0 : $this->partialOffset;
 		try {
@@ -107,14 +110,10 @@ class TusClient extends Client {
 			$offset = $this->sendHeadRequest();
 		} catch (FileException | ClientException $e) {
 			// Create a new upload.
-			$this->url = $this->createUploadWithResponse($this->getKey(), 0);
-			if ($this->url->getStatusCode() !== HttpResponse::HTTP_CREATED) {
-				return $this->url;
+			$response = $this->createWithUploadRR($this->getKey(), 0);
+			if ($response->getStatusCode() !== HttpResponse::HTTP_CREATED) {
+				return $response;
 			}
-		}
-		// Verify that upload is not yet expired.
-		if ($this->isExpired()) {
-			throw new TusException('Upload expired.');
 		}
 		$data = $this->getData($offset, $bytes);
 		$headers = $this->headers + [
@@ -127,17 +126,13 @@ class TusClient extends Client {
 		} else {
 			$headers += ['Upload-Offset' => $offset];
 		}
-		try {
-			$response = $this->getClient()->patch(
-				$this->getUrl(),
-				[
-				'body' => $data,
-				'headers' => $headers,
-				]
-			);
-		} catch (ClientException $e) {
-			throw $this->handleClientException($e);
-		}
+		$response = $this->getClient()->patch(
+			$this->getUrl(),
+			[
+			'body' => $data,
+			'headers' => $headers,
+			]
+		);
 		return $response;
 	}
 }

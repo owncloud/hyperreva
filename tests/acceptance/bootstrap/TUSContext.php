@@ -341,15 +341,15 @@ class TUSContext implements Context {
 
 		if ($bytes !== null) {
 			return $client->file($sourceFile, $destination)
-				->createUploadWithResponse($client->getKey(), $bytes);
+				->createWithUploadRR($client->getKey(), $bytes);
 		} elseif (\filesize($sourceFile) === 0) {
-			return $client->file($sourceFile, $destination)->createUploadWithResponse($client->getKey(), 0);
+			return $client->file($sourceFile, $destination)->createWithUploadRR($client->getKey(), 0);
 		} elseif ($noOfChunks === 1) {
-			return $client->file($sourceFile, $destination)->uploadWithResponse();
+			return $client->file($sourceFile, $destination)->uploadRR();
 		} else {
 			$bytesPerChunk = (int)\ceil(\filesize($sourceFile) / $noOfChunks);
 			for ($i = 0; $i < $noOfChunks; $i++) {
-				$response = $client->uploadWithResponse($bytesPerChunk);
+				$response = $client->uploadRR($bytesPerChunk);
 			}
 			return $response;
 		}
@@ -387,7 +387,7 @@ class TUSContext implements Context {
 			$destination,
 			$url
 		);
-		$response = $client->createUploadWithResponse("", 0);
+		$response = $client->createWithUploadRR("", 0);
 		return $response;
 	}
 
