@@ -58,7 +58,7 @@ services:
       PROXY_CSP_CONFIG_FILE_LOCATION: /etc/ocis/csp-ocm.yaml
       # these three vars are needed to the csp config file to include the web office apps and the importer
       COLLABORA_DOMAIN: ${COLLABORA_DOMAIN:-collabora.ocm.owncloud.test}
-      ONLYOFFICE_DOMAIN: ${ONLYOFFICE_DOMAIN:-onlyoffice.owncloud.test}
+      ONLYOFFICE_DOMAIN: ${ONLYOFFICE_DOMAIN:-onlyoffice.ocm.owncloud.test}
       COMPANION_DOMAIN: ${COMPANION_DOMAIN:-companion.owncloud.test}
       # enable to allow using the banned passwords list
       OCIS_PASSWORD_POLICY_BANNED_PASSWORDS_LIST: banned-password-list.txt

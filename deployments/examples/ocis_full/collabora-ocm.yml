@@ -29,7 +29,8 @@ services:
       MICRO_REGISTRY: "nats-js-kv"
       MICRO_REGISTRY_ADDRESS: "ocis-ocm:9233"
       COLLABORATION_WOPI_SRC: https://${WOPISERVER_OCM_DOMAIN:-wopiserver.ocm.owncloud.test}
-      COLLABORATION_APP_NAME: "Collabora"
+      COLLABORATION_APP_NAME: "CollaboraOnline"
+      COLLABORATION_APP_PRODUCT: "Collabora"
       COLLABORATION_APP_ADDR: https://${COLLABORA_OCM_DOMAIN:-collabora.ocm.owncloud.test}
       COLLABORATION_APP_ICON: https://${COLLABORA_OCM_DOMAIN:-collabora.ocm.owncloud.test}/favicon.ico
       COLLABORATION_APP_LOCKNAME: "com.github.owncloud.ocm.collaboration"
