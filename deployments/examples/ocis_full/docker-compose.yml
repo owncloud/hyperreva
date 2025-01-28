@@ -5,7 +5,6 @@ services:
     # release notes: https://github.com/traefik/traefik/releases
     networks:
       ocis-net:
-      ocis-ocm-net:
     command:
       - "--log.level=${TRAEFIK_LOG_LEVEL:-ERROR}"
       # letsencrypt configuration
@@ -57,4 +56,3 @@ volumes:
 
 networks:
   ocis-net:
-  ocis-ocm-net:

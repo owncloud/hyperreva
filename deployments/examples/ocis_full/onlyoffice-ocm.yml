@@ -2,7 +2,7 @@
 services:
   traefik:
     networks:
-      ocis-ocm-net:
+      ocis-net:
         aliases:
           - ${ONLYOFFICE_OCM_DOMAIN:-onlyoffice.ocm.owncloud.test}
           - ${WOPISERVER_ONLYOFFICE_OCM_DOMAIN:-wopiserver-oo.ocm.owncloud.test}
@@ -10,7 +10,7 @@ services:
   collaboration-oo-ocm:
     image: ${OCIS_DOCKER_IMAGE:-owncloud/ocis}:${OCIS_DOCKER_TAG:-latest}
     networks:
-      ocis-ocm-net:
+      ocis-net:
     depends_on:
       ocis:
         condition: service_started
@@ -52,7 +52,7 @@ services:
   onlyoffice-ocm:
     image: onlyoffice/documentserver:8.2.2
     networks:
-      ocis-ocm-net:
+      ocis-net:
     entrypoint:
       - /bin/sh
       - /entrypoint-override.sh

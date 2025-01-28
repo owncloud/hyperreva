@@ -2,7 +2,7 @@
 services:
   traefik:
     networks:
-      ocis-ocm-net:
+      ocis-net:
         aliases:
           - ${COLLABORA_OCM_DOMAIN:-collabora.ocm.owncloud.test}
           - ${WOPISERVER_OCM_DOMAIN:-wopiserver.ocm.owncloud.test}
@@ -14,7 +14,7 @@ services:
   collaboration-ocm:
     image: ${OCIS_DOCKER_IMAGE:-owncloud/ocis}:${OCIS_DOCKER_TAG:-latest}
     networks:
-      ocis-ocm-net:
+      ocis-net:
     depends_on:
       ocis:
         condition: service_started
@@ -55,7 +55,7 @@ services:
   collabora-ocm:
     image: collabora/code:24.04.5.1.1
     networks:
-      ocis-ocm-net:
+      ocis-net:
     environment:
       aliasgroup1: https://${WOPISERVER_OCM_DOMAIN:-wopiserver.ocm.owncloud.test}:443
       DONT_GEN_SSL_CERT: "YES"
