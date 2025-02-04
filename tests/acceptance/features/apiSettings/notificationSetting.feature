@@ -607,3 +607,50 @@ Feature: Notification Settings
       | message                                   |
       | Alice Hansen added you to Space new-space |
     But user "Brian" should not have a notification related to space "new-space" with subject "Space disabled"
+
+
+  Scenario: no in-app and mail notification should be available when Share Expired notification disabled (Personal space)
+    Given user "Alice" has uploaded file with content "hello world" to "testfile.txt"
+    And user "Alice" has sent the following resource share invitation:
+      | resource           | testfile.txt         |
+      | space              | Personal             |
+      | sharee             | Brian                |
+      | shareType          | user                 |
+      | permissionsRole    | Viewer               |
+      | expirationDateTime | 2025-07-15T14:00:00Z |
+    When user "Brian" disables notification for the following events using the settings API:
+      | Share Expired | mail,in-app |
+    Then the HTTP status code should be "201"
+    When user "Alice" expires the last created share:
+      | space    | Personal     |
+      | resource | testfile.txt |
+    Then the HTTP status code should be "200"
+    And for user "Brian" the space "Shares" should not contain these entries:
+      | testfile.txt |
+    And user "Brian" should have "0" emails
+    But user "Brian" should not have a notification related to space "Alice Hansen" with subject "Membership expired"
+
+
+  Scenario: no in-app and mail notification should be available when Share Expired notification disabled (Project space)
+    Given using spaces DAV path
+    And the administrator has assigned the role "Space Admin" to user "Alice" using the Graph API
+    And user "Alice" has created a space "NewSpace" with the default quota using the Graph API
+    And user "Alice" has uploaded a file inside space "NewSpace" with content "share space items" to "testfile.txt"
+    And user "Alice" has sent the following resource share invitation:
+      | resource           | testfile.txt         |
+      | space              | NewSpace             |
+      | sharee             | Brian                |
+      | shareType          | user                 |
+      | permissionsRole    | Viewer               |
+      | expirationDateTime | 2025-07-15T14:00:00Z |
+    When user "Brian" disables notification for the following events using the settings API:
+      | Share Expired | mail,in-app |
+    Then the HTTP status code should be "201"
+    When user "Alice" expires the last created share:
+      | space              | NewSpace     |
+      | resource           | testfile.txt |
+    Then the HTTP status code should be "200"
+    And for user "Brian" the space "Shares" should not contain these entries:
+      | testfile.txt |
+    And user "Brian" should have "0" emails
+    But user "Brian" should not have a notification related to space "NewSpace" with subject "Membership expired"
