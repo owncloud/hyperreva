@@ -231,7 +231,7 @@ func OcisServiceHandler(res http.ResponseWriter, req *http.Request) {
 				if strings.HasSuffix(key, "DEBUG_ADDR") {
 					address := strings.Split(value.(string), ":")
 					port, _ := strconv.Atoi(address[1])
-					config.SetService(serviceName, port)
+					config.SetServiceDebugPort(serviceName, port)
 				}
 			}
 
@@ -240,7 +240,7 @@ func OcisServiceHandler(res http.ResponseWriter, req *http.Request) {
 			common.Wg.Add(1)
 			go ocis.StartService(serviceName, serviceEnvMap)
 
-			success := ocis.WaitUntilPortListens(serviceName)
+			success := ocis.WaitForService(serviceName)
 			if success {
 				log.Println(fmt.Sprintf("Found Port for %s......", serviceName))
 				sendResponse(res, http.StatusOK, fmt.Sprintf("oCIS service %s started successfully", serviceName))

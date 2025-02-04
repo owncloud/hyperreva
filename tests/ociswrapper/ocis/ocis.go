@@ -30,7 +30,7 @@ var EnvConfigs = []string{}
 var runningServices = make(map[string]int)
 
 func Start(envMap []string) {
-	log.Println("Starting oCIS service........")
+	log.Println("Starting oCIS service...")
 	StartService("", envMap)
 }
 
@@ -328,13 +328,13 @@ func StopService(service string) (bool, string) {
 	return true, fmt.Sprintf("Service %s stopped successfully", service)
 }
 
-// WaitUntilPortListens waits until the port for a given service is listening
-func WaitUntilPortListens(service string) bool {
+// wait until the port for a given service is listening
+func WaitForService(service string) bool {
 	overallTimeout := time.After(30 * time.Second)
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
 
-	port := config.GetService(service)
+	port := config.GetServiceDebugPort(service)
 
 	for {
 		select {
@@ -349,7 +349,6 @@ func WaitUntilPortListens(service string) bool {
 				continue
 			}
 
-			// Check if the port is listening
 			address := fmt.Sprintf(":%d", port)
 			// Try to connect to the port
 			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
@@ -358,7 +357,7 @@ func WaitUntilPortListens(service string) bool {
 				log.Println(fmt.Sprintf("%s service is ready to listen port %d", service, port))
 				return true
 			}
-			log.Println(fmt.Sprintf("%v port is not ready %v\n", conn, err))
+			log.Println(fmt.Sprintf("%s service is not ready on port %v. %v\n", service, port, err))
 		}
 	}
 }

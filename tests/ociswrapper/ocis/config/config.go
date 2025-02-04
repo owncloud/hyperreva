@@ -59,10 +59,10 @@ func Get(key string) string {
 	return config[key]
 }
 
-func SetService(key string, value int) {
+func SetServiceDebugPort(key string, value int) {
 	services[key] = value
 }
 
-func GetService(key string) int {
+func GetServiceDebugPort(key string) int {
 	return services[key]
 }
