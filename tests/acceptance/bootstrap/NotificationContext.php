@@ -329,20 +329,18 @@ class NotificationContext implements Context {
 		?ResponseInterface $response = null
 	): object {
 		$response = $response ?? $this->featureContext->getResponse();
+
 		if (isset($this->featureContext->getJsonDecodedResponseBodyContent($response)->ocs->data)) {
 			$responseBody = $this->featureContext->getJsonDecodedResponseBodyContent($response)->ocs->data;
 			foreach ($responseBody as $value) {
 				if (isset($value->subject) && $value->subject === $subject) {
-					$responseBody = $value;
 					// set notificationId
 					$this->notificationIds[] = $value->notification_id;
-					break;
+					return $value;
 				}
 			}
-		} else {
-			$responseBody = $this->featureContext->getJsonDecodedResponseBodyContent($response);
 		}
-		return $responseBody;
+		return (object) [];
 	}
 
 	/**
