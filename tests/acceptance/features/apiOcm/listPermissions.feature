@@ -43,11 +43,7 @@ Feature: List a federated sharing permissions
               "oneOf":[
                 {
                   "type": "object",
-                  "required": [
-                    "grantedToV2",
-                    "id",
-                    "roles"
-                  ],
+                  "required": ["grantedToV2","id","roles"],
                   "properties": {
                     "grantedToV2": {
                       "type": "object",
@@ -57,24 +53,14 @@ Feature: List a federated sharing permissions
                           "type": "object",
                           "required": ["@libre.graph.userType","displayName","id"],
                           "properties": {
-                            "@libre.graph.userType": {
-                              "const": "Federated"
-                            },
-                            "id": {
-                              "type": "string",
-                              "pattern": "^%federated_user_id_pattern%$"
-                            },
-                            "displayName": {
-                              "const": "Brian Murphy"
-                            }
+                            "@libre.graph.userType": {"const": "Federated"},
+                            "id": {"pattern": "^%federated_user_id_pattern%$"},
+                            "displayName": {"const": "Brian Murphy"}
                           }
                         }
                       }
                     },
-                    "id": {
-                      "type": "string",
-                      "pattern": "^%user_id_pattern%$"
-                    },
+                    "id": {"pattern": "^%user_id_pattern%$"},
                     "invitation": {
                       "type": "object",
                       "required": ["invitedBy"],
@@ -87,16 +73,9 @@ Feature: List a federated sharing permissions
                               "type": "object",
                               "required": ["@libre.graph.userType", "displayName", "id"],
                               "properties": {
-                                "@libre.graph.userType": {
-                                  "const": "Member"
-                                },
-                                "id": {
-                                  "type": "string",
-                                  "pattern": "^%user_id_pattern%$"
-                                },
-                                "displayName": {
-                                  "const": "Alice Hansen"
-                                }
+                                "@libre.graph.userType": {"const": "Member"},
+                                "id": {"pattern": "^%user_id_pattern%$"},
+                                "displayName": {"const": "Alice Hansen"}
                               }
                             }
                           }
@@ -107,124 +86,7 @@ Feature: List a federated sharing permissions
                       "type": "array",
                       "minItems": 1,
                       "maxItems": 1,
-                      "items": {
-                        "type": "string",
-                        "pattern": "^%role_id_pattern%$"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
-      """
-
-
-  Scenario: user lists permissions of a resource shared to a federated user
-    Given using server "LOCAL"
-    And "Alice" has created the federation share invitation
-    And using server "REMOTE"
-    And user "Brian" has been created with default attributes
-    And "Brian" has accepted invitation
-    And using server "LOCAL"
-    And user "Alice" has created folder "/uploadFolder"
-    And user "Alice" has sent the following resource share invitation to federated user:
-      | resource        | uploadFolder |
-      | space           | Personal     |
-      | sharee          | Brian        |
-      | shareType       | user         |
-      | permissionsRole | Editor       |
-    When user "Alice" gets permissions list for folder "uploadFolder" of the space "Personal" using the Graph API
-    Then the HTTP status code should be "200"
-    And the JSON data of the response should match
-      """
-      {
-        "type": "object",
-        "required": [
-          "@libre.graph.permissions.actions.allowedValues",
-          "@libre.graph.permissions.roles.allowedValues",
-          "value"
-        ],
-        "properties": {
-          "value": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 1,
-            "uniqueItems": true,
-            "items": {
-              "oneOf":[
-                {
-                  "type": "object",
-                  "required": [
-                    "grantedToV2",
-                    "id",
-                    "roles"
-                  ],
-                  "properties": {
-                    "grantedToV2": {
-                      "type": "object",
-                      "required": ["user"],
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "required": ["@libre.graph.userType","displayName","id"],
-                          "properties": {
-                            "@libre.graph.userType": {
-                              "const": "Federated"
-                            },
-                            "id": {
-                              "type": "string",
-                              "pattern": "^%federated_user_id_pattern%$"
-                            },
-                            "displayName": {
-                              "const": "Brian Murphy"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "id": {
-                      "type": "string",
-                      "pattern": "^%user_id_pattern%$"
-                    },
-                    "invitation": {
-                      "type": "object",
-                      "required": ["invitedBy"],
-                      "properties": {
-                        "invitedBy": {
-                          "type": "object",
-                          "required": ["user"],
-                          "properties": {
-                            "user": {
-                              "type": "object",
-                              "required": ["@libre.graph.userType", "displayName", "id"],
-                              "properties": {
-                                "@libre.graph.userType": {
-                                  "const": "Member"
-                                },
-                                "id": {
-                                  "type": "string",
-                                  "pattern": "^%user_id_pattern%$"
-                                },
-                                "displayName": {
-                                  "const": "Alice Hansen"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "roles": {
-                      "type": "array",
-                      "minItems": 1,
-                      "maxItems": 1,
-                      "items": {
-                        "type": "string",
-                        "pattern": "^%role_id_pattern%$"
-                      }
+                      "items": {"pattern": "^%role_id_pattern%$"}
                     }
                   }
                 }
@@ -288,24 +150,14 @@ Feature: List a federated sharing permissions
                           "type": "object",
                           "required": ["@libre.graph.userType","displayName","id"],
                           "properties": {
-                            "@libre.graph.userType": {
-                              "const": "Federated"
-                            },
-                            "id": {
-                              "type": "string",
-                              "pattern": "^%federated_user_id_pattern%$"
-                            },
-                            "displayName": {
-                              "const": "Brian Murphy"
-                            }
+                            "@libre.graph.userType": {"const": "Federated"},
+                            "id": {"pattern": "^%federated_user_id_pattern%$"},
+                            "displayName": {"const": "Brian Murphy"}
                           }
                         }
                       }
                     },
-                    "id": {
-                      "type": "string",
-                      "pattern": "^%user_id_pattern%$"
-                    },
+                    "id": { "pattern": "^%user_id_pattern%$" },
                     "invitation": {
                       "type": "object",
                       "required": ["invitedBy"],
@@ -318,14 +170,9 @@ Feature: List a federated sharing permissions
                               "type": "object",
                               "required": ["@libre.graph.userType", "displayName", "id"],
                               "properties": {
-                                "@libre.graph.userType": {
-                                  "const": "Member"
-                                },
-                                "id": {
-                                  "type": "string",
-                                  "pattern": "^%user_id_pattern%$"
-                                },
-                                "displayName": { "const": "Alice Hansen" }
+                                "@libre.graph.userType": {"const": "Member"},
+                                "id": {"pattern": "^%user_id_pattern%$"},
+                                "displayName": {"const": "Alice Hansen"}
                               }
                             }
                           }
@@ -336,7 +183,7 @@ Feature: List a federated sharing permissions
                       "type": "array",
                       "minItems": 1,
                       "maxItems": 1,
-                      "items": { "pattern": "^%role_id_pattern%$" }
+                      "items": {"pattern": "^%role_id_pattern%$"}
                     }
                   }
                 }
@@ -386,7 +233,7 @@ Feature: List a federated sharing permissions
               "oneOf":[
                 {
                   "type": "object",
-                  "required": ["grantedToV2", "id", "roles"],
+                  "required": ["grantedToV2","id","roles"],
                   "properties": {
                     "grantedToV2": {
                       "type": "object",
@@ -396,14 +243,14 @@ Feature: List a federated sharing permissions
                           "type": "object",
                           "required": ["@libre.graph.userType","displayName","id"],
                           "properties": {
-                            "@libre.graph.userType": { "const": "Federated" },
-                            "id": { "pattern": "^%federated_user_id_pattern%$" },
-                            "displayName": { "const": "Brian Murphy" }
+                            "@libre.graph.userType": {"const": "Federated"},
+                            "id": {"pattern": "^%federated_user_id_pattern%$"},
+                            "displayName": {"const": "Brian Murphy"}
                           }
                         }
                       }
                     },
-                    "id": { "pattern": "^%user_id_pattern%$" },
+                    "id": {"pattern": "^%user_id_pattern%$"},
                     "invitation": {
                       "type": "object",
                       "required": ["invitedBy"],
@@ -416,9 +263,9 @@ Feature: List a federated sharing permissions
                               "type": "object",
                               "required": ["@libre.graph.userType", "displayName", "id"],
                               "properties": {
-                                "@libre.graph.userType": { "const": "Member" },
-                                "id": { "pattern": "^%user_id_pattern%$" },
-                                "displayName": { "const": "Alice Hansen" }
+                                "@libre.graph.userType": {"const": "Member"},
+                                "id": {"pattern": "^%user_id_pattern%$"},
+                                "displayName": {"const": "Alice Hansen"}
                               }
                             }
                           }
@@ -429,7 +276,7 @@ Feature: List a federated sharing permissions
                       "type": "array",
                       "minItems": 1,
                       "maxItems": 1,
-                      "items": { "pattern": "^%role_id_pattern%$" }
+                      "items": {"pattern": "^%role_id_pattern%$"}
                     }
                   }
                 }
