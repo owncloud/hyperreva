@@ -1,4 +1,3 @@
-@email
 Feature: Notification Settings
   As a user
   I want to manage my notification settings
