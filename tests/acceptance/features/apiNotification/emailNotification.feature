@@ -1,4 +1,3 @@
-@email
 Feature: Email notification
   As a user
   I want to get email notification of events related to me
