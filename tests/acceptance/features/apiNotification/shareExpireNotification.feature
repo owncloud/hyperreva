@@ -1,4 +1,3 @@
-@email
 Feature: Share Expiry Notification
   As a user
   I want to be notified when share expires
